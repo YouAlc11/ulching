@@ -6,7 +6,7 @@ require_once __DIR__ . '/vendor/Core/Route.php';
 Route::get('/users', 'UsersController@index');
 Route::get('/users/(:num)', 'UsersController@getUserId');
 Route::post('/users/add', 'UsersController@Add');
-Route::view('/users/redirectProductos', __DIR__ . '/App/views/productos/listadoView.php');
+Route::view('/users/redirectProductos', __DIR__ . '/App/views/layout/Topbar.js');
 
 // Despachar la ruta
 Route::dispatch();

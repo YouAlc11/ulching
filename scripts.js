@@ -1,51 +1,40 @@
-function navigateTo(url) {
+function navigateTo(url, container, method) {
     // Actualiza la URL en la barra de navegación sin recargar la página
-    window.history.pushState({}, '', url);
-    showContent(url);  // Llama a la función para mostrar el contenido correcto
+    //window.history.pushState({}, '', url);
+    showContent(url, container, method);  // Llama a la función para mostrar el contenido correcto
 }
 
-function showContent(url) {
-    // Ocultar todos los divs
-    document.querySelectorAll('#app > div').forEach(div => div.classList.remove('active'));
+function showContent(url, container, method) {
 
-    // Mostrar el div correspondiente basado en la URL
-    if (url === '/users') {
-        fetch('/users') // Reemplaza con la URL real de la API
-        .then(response => response.text())
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        // `data` debe ser un objeto con la información que quieres enviar
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la red');
+            }
+            return response.text();
+        })
         .then(data => {
-            const usuariosDiv = document.getElementById('usuarios');
-            usuariosDiv.classList.add('active');
-
-            // Suponiendo que `data` es una lista de usuarios
-            let usersHtml = '<h1>Usuarios</h1><ul>';
-            data.forEach(user => {
-                usersHtml += `<li>${user.name}</li>`; // Suponiendo que los objetos tienen una propiedad `name`
-            });
-            usersHtml += '</ul>';
-
-            usuariosDiv.innerHTML = usersHtml;
+            const containerFetch = document.getElementById(container);
+            containerFetch.innerHTML = data;
         })
         .catch(error => {
             console.error('Error al obtener los datos de la API:', error);
         });
-    } else if (url === '/prueba.php') {
-        document.getElementById('prueba').classList.add('active');
-    } else {
-        document.getElementById('inicio').classList.add('active');
-    }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Asigna el evento click a los enlaces con data-link
-    document.querySelectorAll('a[data-link]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();  // Previene la recarga de la página
-            navigateTo(this.getAttribute('href'));  // Navega a la nueva URL
-        });
-    });
+function set_component(url, container, method) {
+    navigateTo(url, container, method);
+}
 
+document.addEventListener('DOMContentLoaded', function () {
     // Maneja la navegación del historial (botones de atrás/adelante)
-    window.addEventListener('popstate', function() {
+    window.addEventListener('popstate', function () {
         showContent(location.pathname);  // Muestra el contenido basado en la URL actual
     });
 
