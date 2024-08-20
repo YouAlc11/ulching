@@ -35,13 +35,14 @@ export class MainNav {
                                                 <div class="collapse" id="sidebarDashboards">
                                                     <ul class="nav sub-navbar-nav">
                                                         <li class="sub-nav-item">
-                                                            <a class="sub-nav-link" href="index.html">Analytics</a>
+                                                            
+                                                            <a class="sub-nav-link" onclick="get_component('users/Table.js', 'Table' ,'container-components')">Analytics</a>
                                                         </li>
                                                         <li class="sub-nav-item">
-                                                            <a class="sub-nav-link" href="dashboard-finance.html">Finance</a>
+                                                            <a class="sub-nav-link" onclick="get_component('users/PageView.js', 'PageView' ,'container-components')">Finance</a>
                                                         </li>
                                                         <li class="sub-nav-item">
-                                                            <a class="sub-nav-link" href="dashboard-sales.html">Sales</a>
+                                                            <a class="sub-nav-link" onclick="get_component('users/Main.js', 'Main' ,'container-components')">Sales</a>
                                                         </li>
                                                     </ul>
                                                 </div>

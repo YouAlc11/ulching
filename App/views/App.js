@@ -13,6 +13,7 @@ export class App {
 
         const containerElement = document.createElement('div');
         containerElement.className = 'page-content';
+        containerElement.id = 'container-components';
         appElement.appendChild(this.topbar.render());
         appElement.appendChild(this.mainNav.render());
         appElement.appendChild(containerElement);

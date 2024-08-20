@@ -28,16 +28,41 @@ function showContent(url, container, method) {
         });
 }
 
+function get_component(uri, className, container) {
+    const rootPath = `${window.location.protocol}//${window.location.host}/App/views/`;
+    let url = rootPath + uri;
+    // Importar dinámicamente el módulo usando la URI proporcionada
+    import(url)
+        .then((module) => {
+            // Crear una instancia de la clase de forma dinámica usando el nombre de la clase
+            const ClassToInstantiate = module[className];
+            if (!ClassToInstantiate) {
+                throw new Error(`Clase ${className} no encontrada en el módulo ${uri}`);
+            }
+            const instance = new ClassToInstantiate();
+
+            // Añadir la instancia al DOM
+            const containerComponent = document.getElementById(container);
+            containerComponent.innerHTML = '';
+            containerComponent.appendChild(instance.render());
+
+        })
+        .catch((error) => {
+            console.error('Error al cargar el módulo o al instanciar la clase:', error);
+        });
+}
+
 function set_component(url, container, method) {
     navigateTo(url, container, method);
 }
 
+
 document.addEventListener('DOMContentLoaded', function () {
     // Maneja la navegación del historial (botones de atrás/adelante)
     window.addEventListener('popstate', function () {
-        showContent(location.pathname);  // Muestra el contenido basado en la URL actual
+        //showContent(location.pathname);  // Muestra el contenido basado en la URL actual
     });
 
     // Mostrar el contenido correcto al cargar la página
-    showContent(location.pathname);
+    // showContent(location.pathname);
 });
