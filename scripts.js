@@ -1,6 +1,6 @@
 
 function get_component(uri, className, container) {
-    const rootPath = `${window.location.protocol}//${window.location.host}/App/views/`;
+    const rootPath = `${window.location.protocol}//${window.location.host}/App/components/`;
     let url = rootPath + uri;
     // Importar dinámicamente el módulo usando la URI proporcionada
     import(url)

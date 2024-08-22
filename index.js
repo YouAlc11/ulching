@@ -1,4 +1,4 @@
-import { App } from './App/views/App.js';
+import { App } from './App/components/App.js';
 
 const app = new App();
 document.body.innerHTML = '';
