@@ -1,5 +1,5 @@
 <?php
-
+namespace App\Config;
 class Database
 {
     private $conn;
@@ -23,19 +23,19 @@ class Database
         }
     }
 
-    public static function getConnection()
+    public function getConnection()
     {
         try {
-            $conn = new PDO(
+            $this->conn = new \PDO(
                 "mysql:host=" . getenv('DB_HOST') . ";dbname=" . getenv('DB_NAME'),
                 getenv('DB_USER'),
                 getenv('DB_PASS')
             );
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $exception) {
+            $this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        } catch (\PDOException $exception) {
             echo "Connection error: " . $exception->getMessage();
         }
 
-        return $conn;
+        return $this->conn;
     }
 }

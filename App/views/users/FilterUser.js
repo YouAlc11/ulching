@@ -1,7 +1,7 @@
-export class Filters {
+export class FilterUser {
     constructor() {
         this.element = document.createElement('div');
-        this.element.className = 'form-group col-md-6';
+        this.element.className = 'form-group col-md-12';
         this.loadData().then(() => {
             // Una vez que los datos se hayan cargado, vincula el evento `change`
             this.bindChangeEvent(this.callback);
@@ -20,7 +20,7 @@ export class Filters {
             const arrayRes = Array.isArray(res) ? res : [res];
 
             arrayRes.forEach(data => {
-                option += `<option value="${data.numero}">${data.nombre + ' ' + data.apellido}</option>`;
+                option += `<option value="${data.id}">${data.first_name + ' ' + data.last_name}</option>`;
             });
         } catch (error) {
             console.error('Hubo un problema con la solicitud:', error);

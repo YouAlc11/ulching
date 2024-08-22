@@ -55,8 +55,8 @@ export class Signin {
                                             <!-- end card -->
 
                                             <p class="text-white mb-0 text-center">
-                                                New here?
-                                                <a href="auth-signup2.html" class="text-white fw-bold ms-1">Sign Up</a>
+                                                ¿Nuevo aquí?
+                                                <button class="btn btn-default btn-sm" type="button" id="btn-registerForm">Registrate</button>
                                             </p>
                                         </div>
                                         <!-- end col -->
@@ -65,10 +65,19 @@ export class Signin {
                             </div>`;
     }
 
-    bindEvents(callback) {
+    bindEventsLogin(callback) {
         const btnSubmitLogin = this.element.querySelector('#btn-submitLogin');
         if (btnSubmitLogin) {
             btnSubmitLogin.addEventListener('click', callback);
+        } else {
+            console.error('No se pudo encontrar el elemento de filtro para agregar el evento change.');
+        }
+    }
+
+    bindEventsSignUp(callback) {
+        const btnregisterForm = this.element.querySelector('#btn-registerForm');
+        if (btnregisterForm) {
+            btnregisterForm.addEventListener('click', callback);
         } else {
             console.error('No se pudo encontrar el elemento de filtro para agregar el evento change.');
         }

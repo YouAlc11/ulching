@@ -1,52 +1,25 @@
 <?php
-
+require_once __DIR__ . '/../Models/UserModel.php';
+use App\Models\UserModel;
 class UsersController
 {
+    private $model;
+    public function __construct()
+    {
+        $this->model = new UserModel();
+    }
     public function index()
     {
-        $usuarios = [
-            [
-                "numero" => "1",
-                "nombre" => "Joel",
-                "apellido" => "Alcantara"
-            ],
-            [
-                "numero" => "2",
-                "nombre" => "María",
-                "apellido" => "Gómez"
-            ]
-
-        ];
-        echo json_encode($usuarios);
+        echo json_encode($this->model->getAll());
     }
 
     public function getUserId($id)
     {
-        $usuarios = [
-            [
-                "numero" => "1",
-                "nombre" => "Joel",
-                "apellido" => "Alcantara"
-            ],
-            [
-                "numero" => "2",
-                "nombre" => "María",
-                "apellido" => "Gómez"
-            ]
-
-        ];
-        $usuario = $usuarios;
-        if ($id != 0) {
-            $usuario = [];
-            foreach ($usuarios as $data) {
-                if ($id == $data['numero']) {
-                    array_push($usuario, $data);
-                }
-                array_push($usuario);
-            }
+        if ($id == 0) {
+            echo $this->index();
+        } else {
+            echo json_encode($this->model->getById($id));
         }
-
-        echo json_encode($usuario);
     }
 
     public function Add()

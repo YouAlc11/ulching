@@ -2,6 +2,7 @@ import { App } from './App/views/App.js';
 
 const app = new App();
 document.body.innerHTML = '';
+document.body.className = '';
 document.body.appendChild(app.render());
 const vendor = document.createElement('script');
 vendor.src = 'resources/assets/js/vendor.js';

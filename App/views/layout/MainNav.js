@@ -30,19 +30,12 @@ export class MainNav {
                                                     <span class="nav-icon">
                                                         <iconify-icon icon="iconamoon:home-duotone"></iconify-icon>
                                                     </span>
-                                                    <span class="nav-text"> Dashboards </span>
+                                                    <span class="nav-text"> Administración </span>
                                                 </a>
                                                 <div class="collapse" id="sidebarDashboards">
                                                     <ul class="nav sub-navbar-nav">
                                                         <li class="sub-nav-item">
-                                                            
-                                                            <a class="sub-nav-link" onclick="get_component('users/Table.js', 'Table' ,'container-components')">Analytics</a>
-                                                        </li>
-                                                        <li class="sub-nav-item">
-                                                            <a class="sub-nav-link" onclick="get_component('users/PageView.js', 'PageView' ,'container-components')">Finance</a>
-                                                        </li>
-                                                        <li class="sub-nav-item">
-                                                            <a class="sub-nav-link" onclick="get_component('users/Main.js', 'Main' ,'container-components')">Sales</a>
+                                                            <a class="sub-nav-link" onclick="get_component('users/Main.js', 'Main' ,'container-components')">Usuarios</a>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -50,6 +43,8 @@ export class MainNav {
                                         </ul>
                                     </div>`;
     }
+
+
 
     render() {
         return this.element;

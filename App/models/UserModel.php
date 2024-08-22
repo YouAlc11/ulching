@@ -1,8 +1,6 @@
 <?php
 namespace App\Models;
-
-use App\Config\Database;
-
+require_once __DIR__ . '/../Config/Database.php';
 class UserModel
 {
     private $conn;
@@ -16,9 +14,10 @@ class UserModel
     public $created_at;
     public $updated_at;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->conn = Database::getConnection();
+        $connect = new \App\Config\Database();
+        $this->conn = $connect->getConnection();
     }
 
     // Obtener todos los usuarios
@@ -27,7 +26,7 @@ class UserModel
         $query = "SELECT * FROM " . $this->table_name;
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     // Obtener un usuario por ID
@@ -35,8 +34,8 @@ class UserModel
     {
         $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
