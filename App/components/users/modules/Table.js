@@ -3,6 +3,7 @@ export class Table {
         this.element = document.createElement('table');
         this.element.className = 'table text-nowrap mb-0';
         this.loadData();
+
     }
 
     async loadData(idUser = 0) {
@@ -87,7 +88,7 @@ export class Table {
                             </button>
                             <button
                                 type="button"
-                                class="btn btn-sm btn-soft-danger"
+                                class="btn btn-sm btn-soft-danger btn-delete"
                                 id="${data.id}"
                             >
                                 <i
@@ -101,11 +102,70 @@ export class Table {
             retu += `</tbody>`;
             this.element.innerHTML = retu;
 
+            this.appendEvent();
+
         } catch (error) {
             console.error('Hubo un problema con la solicitud:', error);
             this.element.innerHTML = `<tbody><tr><td colspan="4">Error al cargar datos</td></tr></tbody>`;
         }
     }
+
+
+
+    async deleteUser(idUser) {
+        try {
+            const response = await fetch('/usersDelete/' + idUser);
+            if (!response.ok) {
+                throw new Error('Error en la solicitud: ' + response.statusText);
+            }
+            const res = await response.json();
+
+            if (res.status == 1) {
+                this.loadData();
+            }
+
+        } catch (error) {
+            console.error('Hubo un problema con la solicitud:', error);
+            this.element.innerHTML = `<tbody><tr><td colspan="4">Error al cargar datos</td></tr></tbody>`;
+        }
+    }
+
+    appendEvent() {
+        const then = this;
+        const btnsDelete = this.element.querySelectorAll('.btn-delete');
+        btnsDelete.forEach(function (btnDelete) {
+            btnDelete.addEventListener('click', function () {
+                let id = this.id;
+                then.swal(id);
+            });
+        });
+    }
+
+    swal(id) {
+        const then = this;
+        Swal.fire({
+            title: '¡Advertencia!',
+            text: '¿Estás seguro de eliminar al usuario?',
+            icon: 'error',
+            showCancelButton: true,
+            customClass: {
+                confirmButton: 'btn btn-primary w-xs me-2 mt-2',
+                cancelButton: 'btn btn-danger w-xs mt-2'
+            },
+            buttonsStyling: false,
+            showCloseButton: false,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Aquí puedes colocar la acción que deseas realizar al confirmar
+                then.deleteUser(id); // Por ejemplo, llamar a la función deleteUser con el id del usuario
+            }
+        });
+
+    }
+
+
 
     render() {
         return this.element;

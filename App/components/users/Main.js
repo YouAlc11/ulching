@@ -1,7 +1,7 @@
-import { Table } from "./Table.js";
-import { FilterUser } from "./FilterUser.js";
+import { Table } from "./modules/Table.js";
+import { FilterUser } from "./modules/FilterUser.js";
 import { Modals } from "../global/modals/Modals.js";
-import { FormUser } from "./FormUser.js";
+import { FormUser } from "./modules/FormUser.js";
 
 export class Main {
     constructor() {
