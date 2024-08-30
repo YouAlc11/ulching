@@ -26,7 +26,7 @@ class Route
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
         // Intentar encontrar una coincidencia exacta
-        if (array_key_exists($requestUri, self::$routes[$requestMethod])) {
+        if (isset(self::$routes[$requestMethod][$requestUri])) {
             self::executeAction(self::$routes[$requestMethod][$requestUri]);
             return;
         }
@@ -34,6 +34,7 @@ class Route
         // Intentar encontrar una coincidencia con una ruta dinámica
         foreach (self::$routes[$requestMethod] as $route => $controllerAction) {
             $pattern = preg_replace('/\(:num\)/', '([0-9]+)', $route);
+            $pattern = preg_replace('/\(:any\)/', '([^\/]+)', $pattern);
             $pattern = str_replace('/', '\/', $pattern);
             $pattern = '/^' . $pattern . '$/';
 
@@ -45,7 +46,7 @@ class Route
         }
 
         // Intentar encontrar una vista
-        if (array_key_exists($requestUri, self::$viewRoutes)) {
+        if (isset(self::$viewRoutes[$requestUri])) {
             require_once self::$viewRoutes[$requestUri];
         } else {
             self::send404("Route $requestUri not defined");
@@ -54,10 +55,8 @@ class Route
 
     private static function executeAction($controllerAction, $params = [])
     {
-        $action = explode('@', $controllerAction);
-        $controllerFile = __DIR__ . '/../../App/controllers/' . $action[0] . '.php';
-        $controllerClass = $action[0];
-        $method = $action[1];
+        list($controllerClass, $method) = explode('@', $controllerAction);
+        $controllerFile = __DIR__ . '/../../App/Controllers/' . $controllerClass . '.php';
 
         if (file_exists($controllerFile)) {
             require_once $controllerFile;

@@ -39,12 +39,17 @@ export class Table {
             const res = await response.json();
             const arrayRes = Array.isArray(res) ? res : [res];
             arrayRes.forEach(data => {
-                let activ = 'Ativo';
+                let activ = 'Activo';
                 let classTd = 'text-success';
+                let buttonDelete = `<button type="button" class="btn btn-sm btn-soft-danger btn-delete" id="${data.id}" title="Eliminar"><i class="bx bx-trash fs-16"></i></button>`;
+                let buttonActive = '';
                 if (data.is_active == 0) {
                     activ = 'Inactivo';
                     classTd = 'text-danger';
+                    buttonDelete = '';
+                    buttonActive = `<button type="button" class="btn btn-sm btn-soft-success btn-active" id="${data.id}" title="Activar"><i class="bx bx-check fs-16"></i></button>`;
                 }
+
                 retu += `
                     <tr>
                         <td>
@@ -81,20 +86,15 @@ export class Table {
                                 class="btn btn-sm btn-soft-secondary me-1"
                                 title="ver"
                                 id="${data.id}"
+                                onclick="get_component('users/modules/ProfileUser.js', 'ProfileUser' ,'container-users', '${data.id}')"
                             >
                                 <i
                                     class="bx bx-bullseye fs-16"
                                 ></i>
                             </button>
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-soft-danger btn-delete"
-                                id="${data.id}"
-                            >
-                                <i
-                                    class="bx bx-trash fs-16"
-                                ></i>
-                            </button>
+                            ${buttonDelete}
+                            ${buttonActive}
+                            
                         </td>
                     </tr>`;
             });
@@ -103,6 +103,7 @@ export class Table {
             this.element.innerHTML = retu;
 
             this.appendEvent();
+            this.appendEventActive();
 
         } catch (error) {
             console.error('Hubo un problema con la solicitud:', error);
@@ -114,19 +115,33 @@ export class Table {
 
     async deleteUser(idUser) {
         try {
-            const response = await fetch('/usersDelete/' + idUser);
-            if (!response.ok) {
-                throw new Error('Error en la solicitud: ' + response.statusText);
-            }
-            const res = await response.json();
-
-            if (res.status == 1) {
+            const response = await fetch('/users/delete/' + idUser);
+            if (response.ok) {
+                const res = await response.text();
                 this.loadData();
             }
+            else {
+                throw new Error('Error en la solicitud: ' + response.statusText);
+            }
+        } catch (error) {
+            console.error('Hubo un problema con la solicitud:', error);
+        }
+    }
+
+    async activeUser(idUser) {
+        try {
+            const response = await fetch('/users/active/' + idUser);
+            if (response.ok) {
+                const res = await response.text();
+                this.loadData();
+            }
+            else {
+                throw new Error('Error en la solicitud: ' + response.statusText);
+            }
+
 
         } catch (error) {
             console.error('Hubo un problema con la solicitud:', error);
-            this.element.innerHTML = `<tbody><tr><td colspan="4">Error al cargar datos</td></tr></tbody>`;
         }
     }
 
@@ -140,6 +155,18 @@ export class Table {
             });
         });
     }
+
+    appendEventActive() {
+        const then = this;
+        const btnsActive = this.element.querySelectorAll('.btn-active');
+        btnsActive.forEach(function (btnActive) {
+            btnActive.addEventListener('click', function () {
+                let id = this.id;
+                then.swalActive(id);
+            });
+        });
+    }
+
 
     swal(id) {
         const then = this;
@@ -160,6 +187,30 @@ export class Table {
             if (result.isConfirmed) {
                 // Aquí puedes colocar la acción que deseas realizar al confirmar
                 then.deleteUser(id); // Por ejemplo, llamar a la función deleteUser con el id del usuario
+            }
+        });
+
+    }
+
+    swalActive(id) {
+        const then = this;
+        Swal.fire({
+            title: '¡Advertencia!',
+            text: '¿Estás seguro de activar este usuario?',
+            icon: 'warning',
+            showCancelButton: true,
+            customClass: {
+                confirmButton: 'btn btn-primary w-xs me-2 mt-2',
+                cancelButton: 'btn btn-danger w-xs mt-2'
+            },
+            buttonsStyling: false,
+            showCloseButton: false,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Aquí puedes colocar la acción que deseas realizar al confirmar
+                then.activeUser(id); // Por ejemplo, llamar a la función deleteUser con el id del usuario
             }
         });
 

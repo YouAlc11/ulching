@@ -1,12 +1,11 @@
 import { addLibrary } from "../../global/design/addLibrary.js";
 export class FormUser {
-    constructor() {
-
-
+    constructor(callback, idUser = '') {
         this.element = document.createElement('form');
         this.element.id = 'form-user';
         this.element.className = 'authentication-form';
         this.element.innerHTML = `  <div id="msg-container"></div>
+                                    <input type="hidden" id="user_id" name="user_id" value="${idUser}">
                                     <div class="row">
                                         <div class="mb-3 col-md-6">
                                             <label class="form-label" for="name">Nombre</label>
@@ -56,8 +55,13 @@ export class FormUser {
                                             </button>
                                         </div>
                                     </div>`;
+        this.callback = callback;
         this.createLibrary();
         this.eventClick();
+
+        if (idUser != '') {
+            this.getUser(idUser);
+        }
     }
 
     eventClick() {
@@ -66,6 +70,29 @@ export class FormUser {
         btnSubmit.addEventListener('click', () => {
             this.signUp();
         });
+    }
+
+    async getUser(idUser) {
+        try {
+            const response = await fetch('/users/' + idUser);
+            if (response.ok) {
+                const res = await response.json();
+                const arrayRes = Array.isArray(res) ? res : [res];
+                if (arrayRes.length > 0) {
+                    this.element.querySelector("#name").value = arrayRes[0].first_name;
+                    this.element.querySelector("#middlename").value = arrayRes[0].middle_name;
+                    this.element.querySelector("#lastname").value = arrayRes[0].last_name;
+                    this.element.querySelector("#username").value = arrayRes[0].username;
+                    this.element.querySelector("#phonenumber").value = arrayRes[0].phone_number;
+                    this.element.querySelector("#basic-datepicker").value = arrayRes[0].date_of_birth;
+                    this.element.querySelector("#email").value = arrayRes[0].email;
+                }
+
+            }
+        }
+        catch (error) {
+            console.error('Error en la solicutd del usuario formulario, ', error);
+        }
     }
 
     async signUp() {
@@ -77,30 +104,36 @@ export class FormUser {
                 body: formData,
             });
             if (response.ok) {
-                const request = await response.json();
-                if (request.status == 1) {
+                let req = await response.text();
+                if (req == 'true') {
 
-                } else {
-                    this.set_alert(request.status, request.msg);
+                    if (this.callback) {
+                        this.callback();
+                    }
+
                 }
+                else {
+                    this.set_alert();
+                }
+            }
+        } catch (error) {
+            console.error('Error en al guardar usuario', error);
+        }
+    }
+
+    async set_alert() {
+        const containerAlert = this.element.querySelector("#msg-container");
+
+        try {
+            const response = await fetch('/notifications');
+            if (response.ok) {
+                const request = await response.text();
+                containerAlert.innerHTML = request;
             }
         } catch {
 
         }
-    }
 
-    set_alert(status, msg) {
-        let classname = "success";
-        if (status == 0) {
-            classname = "danger";
-        }
-        const containerAlert = this.element.querySelector("#msg-container");
-        containerAlert.innerHTML = `<div class="alert alert-${classname}" role="alert">
-                                                                        ${msg}
-                                                                    </div>`;
-        setTimeout(function () {
-            containerAlert.innerHTML = '';
-        }, 3000);
     }
 
     createLibrary() {

@@ -5,14 +5,7 @@ class UserModel
 {
     private $conn;
     private $table_name = "users";
-
-    public $id;
-    public $code;
-    public $name;
-    public $surname;
-    public $age;
-    public $created_at;
-    public $updated_at;
+    private $table_address = "user_addresses";
 
     public function __construct()
     {
@@ -57,15 +50,99 @@ class UserModel
         return $queryPrepare->execute();
     }
 
+    public function update($nombre, $middelname, $lastname, $username, $phonenumber, $dateofbirth, $email, $idUser, $password = '', $salt = '')
+    {
+        $strpassword = '';
+        if ($password != '') {
+            $strpassword = " password_salt = :salt, password_hash = :pass,";
+        }
+        $query = "UPDATE $this->table_name  SET username = :username, email = :email, phone_number = :phone_number,  first_name = :firstname, last_name = :lastname, middle_name = :middlename, date_of_birth = :date $strpassword
+                    WHERE id = :id";
+        $queryPrepare = $this->conn->prepare($query);
+        $queryPrepare->bindParam(':username', $username, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':email', $email, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':phone_number', $phonenumber, \PDO::PARAM_STR);
+        if ($password != '') {
+            $queryPrepare->bindParam(':salt', $salt, \PDO::PARAM_STR);
+            $queryPrepare->bindParam(':pass', $password, \PDO::PARAM_STR);
+        }
+
+        $queryPrepare->bindParam(':firstname', $nombre, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':lastname', $lastname, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':middlename', $middelname, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':date', $dateofbirth, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':id', $idUser, \PDO::PARAM_STR);
+
+        return $queryPrepare->execute();
+    }
     public function remove($id)
     {
         $query = "UPDATE " . $this->table_name . " SET is_active  = 0 WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
-        if ($stmt->execute()) {
-            return ["status" => 1, "msg" => "Se ha eliminado correctamente."];
-        } else {
-            return ["status" => 0, "msg" => "Ha ocurrido un error, intentelo mas tarde."];
-        }
+        return $stmt->execute();
+    }
+
+    public function active($id)
+    {
+        $query = "UPDATE " . $this->table_name . " SET is_active  = 1 WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
+        return $stmt->execute();
+    }
+
+    public function getAddressesUser($id)
+    {
+        $query = "SELECT * FROM " . $this->table_address . " WHERE status = 1 AND user_id = :id ORDER BY address_id DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getAddress($id)
+    {
+        $query = "SELECT * FROM " . $this->table_address . " WHERE  address_id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function addAddress($userId, $addresLine, $city, $postalCode, $state, $country)
+    {
+        $query = "INSERT INTO $this->table_address (user_id,address_line_1, city, state, postal_code, country) 
+                VALUES (:userId, :addressLine, :city, :state, :postalCode, :country)";
+        $queryPrepare = $this->conn->prepare($query);
+        $queryPrepare->bindParam(':userId', $userId, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':addressLine', $addresLine, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':city', $city, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':state', $state, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':postalCode', $postalCode, \PDO::PARAM_STR);
+        $queryPrepare->bindParam(':country', $country, \PDO::PARAM_STR);
+
+        return $queryPrepare->execute();
+    }
+
+    public function updateAddress($userId, $addresLine, $city, $postalCode, $state, $country, $update)
+    {
+        $query = "UPDATE " . $this->table_address . " SET address_line_1  = :addressLine, city=:city, state=:state, postal_code = :postalCode, country = :country  WHERE address_id = :update";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':addressLine', $addresLine, \PDO::PARAM_STR);
+        $stmt->bindParam(':city', $city, \PDO::PARAM_STR);
+        $stmt->bindParam(':state', $state, \PDO::PARAM_STR);
+        $stmt->bindParam(':postal_code', $postalCode, \PDO::PARAM_STR);
+        $stmt->bindParam(':country', $country, \PDO::PARAM_STR);
+        $stmt->bindParam(':update', $update, \PDO::PARAM_STR);
+
+        return $stmt->execute();
+    }
+
+    public function deleteAddress($id)
+    {
+        $query = "UPDATE " . $this->table_address . " SET status  = 0 WHERE address_id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_STR);
+        return $stmt->execute();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace App\Helpers;
 
-class Helpers
+class Hash
 {
     public function hashGenerate($salt, $password)
     {

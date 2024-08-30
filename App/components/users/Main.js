@@ -7,8 +7,9 @@ export class Main {
     constructor() {
         this.table = new Table();
         this.filter = new FilterUser();
-        this.formUser = new FormUser();
-        this.modals = new Modals('Crear nuevo usuario', 'lg', this.formUser.render());
+        this.formUser = new FormUser(this.table.loadData);
+        this.idModal = 'modalUserAdd';
+        this.modals = new Modals('Crear nuevo usuario', 'lg', this.formUser.render(), this.idModal);
         this.element = document.createElement('div');
         this.element.className = 'container-xxl';
         this.element.innerHTML = `  <!-- ========== Page Title Start ========== -->
@@ -25,7 +26,7 @@ export class Main {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" id="container-users">
                                         <div class="col">
                                             <div class="card">
                                                 <div class="card-body">
@@ -38,7 +39,7 @@ export class Main {
                                                             <button
                                                                 type="button"
                                                                 class="btn btn-primary d-inline-flex align-items-center"
-                                                                data-bs-toggle="modal" data-bs-target="#modalActive"
+                                                                data-bs-toggle="modal" data-bs-target="#${this.idModal}"
                                                             >
                                                                 <i class="bx bx-plus me-1"></i
                                                                 >Crear Usuario

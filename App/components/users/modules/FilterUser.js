@@ -35,8 +35,6 @@ export class FilterUser {
         const filterElement = this.element.querySelector('#filter_user');
         if (filterElement) {
             filterElement.addEventListener('change', callback);
-        } else {
-            console.error('No se pudo encontrar el elemento de filtro para agregar el evento change.');
         }
     }
 
